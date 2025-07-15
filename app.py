@@ -160,7 +160,8 @@ st.markdown(
     """
     <footer class="footer">
       準備好體驗你的 Maya 力量了嗎？  
-      <a href="#查詢你的印記">👉 一鍵查詢</a>  
+      <a href="https://www.facebook.com/soulclean1413/" target="_blank">👉 加入粉專</a> 
+      <a href="https://www.instagram.com/tilandky/" target="_blank">👉 追蹤IG</a>
       <a href="https://line.me/R/ti/p/%40690ZLAGN" target="_blank">👉 加入社群</a>
     </footer>
     """,
