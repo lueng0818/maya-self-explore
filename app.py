@@ -14,7 +14,6 @@ IMG_DIR  = os.path.join(BASE_DIR, "images")
 st.set_page_config(page_title="Maya 生命印記解碼", layout="wide")
 st.markdown(
     """<style>
-    /* 模擬 Tailwind utility */
     .hero {padding:4rem 2rem; text-align:center; background:#f0f5f9;}
     .hero h1 {font-size:3rem; font-weight:700; margin-bottom:0.5rem;}
     .hero p  {font-size:1.25rem; margin-bottom:1.5rem;}
@@ -29,7 +28,6 @@ st.markdown(
 # ────────────── Hero Section ──────────────
 st.markdown(
     """
-    <style> /* 省略 CSS… */ </style>
     <section class="hero">
       <h1>立即解碼你的 Maya 生命印記，喚醒宇宙支持能量</h1>
       <p>只要輸入出生日期，一鍵探索你的專屬靈性密碼，並獲得實踐建議──無需下載、馬上操作。</p>
@@ -45,8 +43,6 @@ try:
     month_accum = pd.read_csv(os.path.join(DATA_DIR, "month_day_accum.csv"),   index_col="月份")["累積天數"].to_dict()
     kin_basic   = pd.read_csv(os.path.join(DATA_DIR, "kin_basic_info.csv"))
     self_df     = pd.read_csv(os.path.join(DATA_DIR, "totem_interpretation_new.csv"))
-    wealth_df   = pd.read_csv(os.path.join(DATA_DIR, "totem_wealth_view.csv"))
-    emotion_df  = pd.read_csv(os.path.join(DATA_DIR, "totem_emotion.csv"))
 except Exception as e:
     st.error(f"❌ 資料載入失敗：{e}")
     st.stop()
@@ -57,7 +53,6 @@ year = st.sidebar.selectbox("西元年", sorted(kin_start.keys()), index=sorted(
 month = st.sidebar.selectbox("月份", list(range(1,13)), index=0)
 max_day = calendar.monthrange(year, month)[1]
 day = st.sidebar.slider("日期", 1, max_day, 1)
-category = st.sidebar.radio("🔍 主題", ["自我探索","金錢觀","情感議題"])
 
 # ────────────── KIN 計算 ──────────────
 start_kin = kin_start.get(year)
@@ -82,47 +77,22 @@ if os.path.exists(img_file):
     st.image(Image.open(img_file), width=120)
 
 # ────────────── 功能說明 ──────────────
-# ── 功能說明 區塊 ──
 st.markdown("## 🔍 功能說明")
-
 st.markdown("""
 1. **輸入你的生日**  
    選擇西元年／月／日，精準算出你的 Maya 能量頻率（KIN）。
 
 2. **一鍵生成印記**  
    系統自動計算並對應 20 種圖騰，並根據主題生成不同維度的深入解讀。  
-""")
 
-if category == "自我探索":
-    st.markdown("""
 3. **深入能量解讀：自我探索**  
    解鎖你的**天賦**（🎁 禮物）、**挑戰**（🚧 瓶頸）與**角色定位**（🙋 你是誰），  
    並附上具體日常練習建議（🪄 建議），幫助你在生活中自然發揮力量。
-""")
 
-elif category == "金錢觀":
-    st.markdown("""
-3. **深入能量解讀：金錢觀**  
-   解析你的**金錢態度**（💰 我的金錢觀）、**盲點**（🚧 金錢盲點）、  
-   以及累積財富的實戰方法（🌱 創造豐盛的方法、🗝️ 如何達到財富自由），  
-   讓你從心態與行動兩面穩健累積資源。
-""")
-
-else:  # 情感議題
-    st.markdown("""
-3. **深入能量解讀：情感議題**  
-   探索你的**情感特質**（💞 個人情感特質）、**相處盲點**（🚧 關係盲點）、  
-   並提供**溝通與修復建議**（💡 改善關係的建議、🤝 伴侶需知），  
-   幫助你在關係中更輕鬆自在地連結與成長。
-""")
-
-st.markdown("""
 4. **分享與回饋**  
    將你的專屬印記海報分享到社群，或在底部留言，  
    幫助我們持續優化內容與體驗。
 """)
-
-st.markdown('</div>', unsafe_allow_html=True)
 
 # ────────────── caption mapping ──────────────
 descriptions = {
@@ -130,14 +100,6 @@ descriptions = {
   "最常遇到的瓶頸": "←代表你比較容易卡關…",
   "建議": "←提供簡單可行的提醒…",
   "擁有什麼樣的禮物": "←天生擁有的天賦…",
-  "我的金錢觀": "←說明你怎麼看錢…",
-  "金錢盲點": "←用錢時容易犯的錯…",
-  "創造豐盛的方法": "←幫助累積財富的小事…",
-  "如何達到財富自由": "←心態＋行動結合…",
-  "個人情感特質": "←你在感情裡的樣子…",
-  "情感關係中的盲點": "←相處障礙小陷阱…",
-  "改善關係的建議": "←小方法改善溝通…",
-  "需要伴侶了解的重點": "←希望對方知道的需求…",
 }
 
 def render_section(df, items, edu_pts):
@@ -151,36 +113,15 @@ def render_section(df, items, edu_pts):
         if cap: st.caption(cap)
         st.write(row[col])
 
-# ────────────── 深度解讀 ──────────────
-if category=="自我探索":
-    df = self_df[self_df["圖騰"]==totem]
-    if not df.empty:
-        render_section(
-            df,
-            [("你是誰","🙋 你是誰"),("最常遇到的瓶頸","🚧 最常遇到的瓶頸"),
-             ("建議","🪄 建議"),("擁有什麼樣的禮物","🎁 擁有什麼樣的禮物")],
-            ["圖騰是你的角色原型，幫助你看見優勢與盲點。","內化這份能量，成為更完整的自己。"]
-        )
-
-elif category=="金錢觀":
-    df = wealth_df[wealth_df["圖騰"]==totem]
-    if not df.empty:
-        render_section(
-            df,
-            [("我的金錢觀","💰 我的金錢觀"),("金錢盲點","🚧 金錢盲點"),
-             ("創造豐盛的方法","🌱 創造豐盛的方法"),("如何達到財富自由","🗝️ 如何達到財富自由")],
-            ["了解自己錢的能量，才不會重複踩雷。","調整心態＋實踐方法，累積財富自由。"]
-        )
-
-elif category=="情感議題":
-    df = emotion_df[emotion_df["圖騰"]==totem]
-    if not df.empty:
-        render_section(
-            df,
-            [("個人情感特質","💞 個人情感特質"),("情感關係中的盲點","🚧 情感關係中的盲點"),
-             ("改善關係的建議","💡 改善關係的建議"),("需要伴侶了解的重點","🤝 需要伴侶了解的重點")],
-            ["先了解自身情感模式，才能有效調整。","告訴對方需求，共創穩定連結。"]
-        )
+# ────────────── 深度解讀：自我探索 ──────────────
+df = self_df[self_df["圖騰"]==totem]
+if not df.empty:
+    render_section(
+        df,
+        [("你是誰","🙋 你是誰"),("最常遇到的瓶頸","🚧 最常遇到的瓶頸"),
+         ("建議","🪄 建議"),("擁有什麼樣的禮物","🎁 擁有什麼樣的禮物")],
+        ["圖騰是你的角色原型，幫助你看見優勢與盲點。","內化這份能量，成為更完整的自己。"]
+    )
 
 # ────────────── 深度解讀範例 ──────────────
 st.markdown('<div class="example">', unsafe_allow_html=True)
@@ -198,10 +139,7 @@ st.markdown('<div class="testimonials">', unsafe_allow_html=True)
 st.markdown("### 案例分享")
 st.markdown("""
 > **小芸，35 歲｜自由工作者**  
-> “第一次查到『藍鷹』印記，就驚覺自己其實一直渴望自由翱翔。照著建議練習後，一個月內順利接下夢想案子！”  
-
-> **阿傑，28 歲｜設計師**  
-> “系統操作非常直覺，不到十分鐘就完成。看到自己的挑戰角色後，給了我面對困難的新勇氣。”
+> “第一次查到『藍鷹』印記，就驚覺自己其實一直渴望自由翱翔。照著建議練習後，一個月內順利接下夢想案子！”
 """)
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -214,9 +152,6 @@ st.markdown("""
 
 - **一天可以查幾次？**  
   建議每次間隔 24 小時，以穩定能量頻率。  
-
-- **能否下載解讀海報？**  
-  正在開發中，敬請期待下次更新！
 """)
 st.markdown('</div>', unsafe_allow_html=True)
 
